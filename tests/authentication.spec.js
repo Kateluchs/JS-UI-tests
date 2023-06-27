@@ -57,7 +57,7 @@ test('4. Reset password button', async ({ page }) => {
   const page1Promise = page.waitForEvent('popup');
   await page.locator(loginPage.resetPassLink).click();
   const page1 = await page1Promise;
-  await expect(page).toHaveURL(`https://kb.insentry.io/pages/viewpage.action?pageId=691024`)
+  await expect(page1).toHaveURL(`https://kb.insentry.io/pages/viewpage.action?pageId=691024`)
 
 });
 
@@ -75,13 +75,12 @@ test('6. Logout', async ({ page }) => {
   await expect(page).toHaveURL(`${config.url}/d/`)
   await expect(page.locator(navigationElement.header)).toBeVisible()
 
- // await page.locator(navigationElement.logoutButton).click();
-
   await page.locator(navigationElement.logoutButton).click();
 
   await expect(page).toHaveURL(`${config.url}/d/login`)
 
   await page.goto(config.url);
+
   await expect(page).toHaveURL(`${config.url}/d/login`)
   await expect(page.locator(loginPage.invalidDataMessage)).toHaveText(`Доступ запрещён. Пожалуйста, авторизуйтесь.`)
 
