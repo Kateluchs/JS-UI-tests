@@ -1,7 +1,7 @@
 const config = {
-    url: 'http://127.0.0.1:9200',
+    baseUrl: 'http://127.0.0.1:9200',
     credentials: {
-    login: "admin",
+    login: "Admin",
     password: "!Qwerty0"
     }
   }
