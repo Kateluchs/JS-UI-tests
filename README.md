@@ -3,7 +3,7 @@
 ## Running all tests
 npx playwright test
 
-###Options
+### Options
 1. --ui
 1. --debug
 1. --headed
