@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx playwright test"
+    "test": "npx playwright test",
+    "test:dev": "playwright test --ui",
+    "test:ci": "playwright test"
   },
   "repository": {
     "type": "git",

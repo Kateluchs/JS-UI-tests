@@ -32,13 +32,26 @@ test.describe.skip('First authentication', () => {
 
   test('New password incorrect input messages', async ({ page }) => {
     const loginPage = new LoginPage(page);
-    const inputContent = ['', 'Qwqrt', 'Qwqrty'];
-    const messageContent = ['Вы не ввели пароль', 'Минимальная длина пароля (6 символов)', 'Пароль должен содержать цифру, заглавную и строчную букву'];
 
-    for (const input of inputContent) {
-      await loginPage.newPasswordInput.fill(input)
+    const content = [
+      {
+        input: '',
+        message: 'Вы не ввели пароль'
+      },
+      {
+        input: 'Qwqrt',
+        message: 'Минимальная длина пароля (6 символов)'
+      },
+      {
+        input: 'Qwqrty',
+        message: 'Пароль должен содержать цифру, заглавную и строчную букву'
+      }
+    ]
+
+    for (const item of content) {
+      await loginPage.newPasswordInput.fill(item.input)
       await loginPage.submitButton.click()
-      await expect(loginPage.newPasswordErrorMessage).toHaveText(messageContent[inputContent.indexOf(input)])
+      await expect(loginPage.newPasswordErrorMessage).toHaveText(item.message)
     }
 
   });
