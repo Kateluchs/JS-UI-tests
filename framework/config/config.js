@@ -1,8 +1,9 @@
 const config = {
     baseUrl: 'http://127.0.0.1:9200',
     credentials: {
-    login: "Admin",
-    password: "!Qwerty0"
+    login: "admin",
+    password: "!Qwerty1",
+    language: "RUS",
     }
   }
   

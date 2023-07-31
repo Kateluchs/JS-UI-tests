@@ -1,18 +1,17 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, firefox, webkit } from '@playwright/test';
 import config from '.././framework/config/config';
 import { LoginPage } from '../framework/pages/login.page';
 import { ViewPage } from '../framework/pages/view.page';
-import { NavigationElement } from '../framework/elements/header-nav';
+import { NavigationElement } from '../framework/elements/header-nav.element';
 
 
 
-test.describe.skip('First authentication', () => {
+test.describe('First authentication', () => {
 
   test.beforeEach(async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto()
   });
-
 
   test('Redirect to login page', async ({ page }) => {
     const loginPage = new LoginPage(page);
@@ -24,9 +23,9 @@ test.describe.skip('First authentication', () => {
   test('Login incorrect input messages', async ({ page }) => {
     const loginPage = new LoginPage(page);
 
-      await loginPage.loginInput.fill('')
-      await loginPage.submitButton.click()
-      await expect(loginPage.adminLoginInputErrorMessage).toHaveText('Укажите корректный логин')
+    await loginPage.loginInput.fill('')
+    await loginPage.submitButton.click()
+    await expect(loginPage.adminLoginInputErrorMessage).toHaveText('Пожалуйста, заполните это поле')
 
   });
 
@@ -36,14 +35,18 @@ test.describe.skip('First authentication', () => {
     const content = [
       {
         input: '',
-        message: 'Вы не ввели пароль'
+        message: 'Пожалуйста, заполните это поле'
       },
       {
         input: 'Qwqrt',
-        message: 'Минимальная длина пароля (6 символов)'
+        message: 'Не менее 6 символов'
       },
       {
         input: 'Qwqrty',
+        message: 'Пароль должен содержать цифру, заглавную и строчную букву'
+      },
+      {
+        input: 'qwqrty5',
         message: 'Пароль должен содержать цифру, заглавную и строчную букву'
       }
     ]
@@ -81,6 +84,11 @@ test.describe.skip('First authentication', () => {
     await loginPage.newPasswordEyeButton.click()
 
     await expect(loginPage.newPasswordInput).toHaveAttribute('type', 'text')
+    await expect(loginPage.confirmPasswordInput).toHaveAttribute('type', 'text')
+
+    await loginPage.confirmPasswordEyeButton.click()
+
+    await expect(loginPage.newPasswordInput).toHaveAttribute('type', 'password')
     await expect(loginPage.confirmPasswordInput).toHaveAttribute('type', 'password')
 
     await loginPage.confirmPasswordEyeButton.click()
@@ -91,33 +99,42 @@ test.describe.skip('First authentication', () => {
     await loginPage.newPasswordEyeButton.click()
 
     await expect(loginPage.newPasswordInput).toHaveAttribute('type', 'password')
-    await expect(loginPage.confirmPasswordInput).toHaveAttribute('type', 'text')
-
-    await loginPage.confirmPasswordEyeButton.click()
-
-    await expect(loginPage.newPasswordInput).toHaveAttribute('type', 'password')
     await expect(loginPage.confirmPasswordInput).toHaveAttribute('type', 'password')
 
   });
 
   test('Correct inputs and first login', async ({ page }) => {
     const loginPage = new LoginPage(page);
+
     await loginPage.loginInput.fill(config.credentials.login)
     await loginPage.newPasswordInput.fill(config.credentials.password)
     await loginPage.confirmPasswordInput.fill(config.credentials.password)
     await loginPage.loginInput.click()
     await expect(loginPage.newPasswordErrorMessage).not.toBeVisible()
     await expect(loginPage.confirmPasswordErrorMessage).not.toBeVisible()
+    await loginPage.toggle.click()
     await loginPage.submitButton.click()
     await expect(page).toHaveURL(`${config.baseUrl}/d/admin`)
 
+
   });
+
 });
-
-
 
 test.describe('Authentication', () => {
 
+  test.skip('Other browser message (Firefox)', async () => {
+    
+    const browser = await webkit.launch();
+    const context = await browser.newContext();
+
+    const page = await context.newPage();
+    await page.goto(config.baseUrl);
+    await expect(page.locator('div[class*=NotSupportBrowser_message]')).toBeVisible()
+
+    await context.close();
+
+  });
 
   test('Positive authentication', async ({ page }) => {
 
@@ -150,8 +167,26 @@ test.describe('Authentication', () => {
     await loginPage.login('', '')
 
     await expect(page).toHaveURL(loginPage.url)
-    await expect(loginPage.loginInputErrorMessage).toHaveText(`Укажите корректный логин`)
-    await expect(loginPage.passwordInputErrorMessage).toHaveText(`Вы не ввели пароль`)
+    await expect(loginPage.loginInputErrorMessage).toHaveText(`Пожалуйста, заполните это поле`)
+    await expect(loginPage.passwordInputErrorMessage).toHaveText(`Пожалуйста, заполните это поле`)
+
+  });
+
+  test('Show and hide password', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+
+    await loginPage.goto()
+    await loginPage.passwordInput.fill('Achfnk0')
+
+    await expect(loginPage.passwordInput).toHaveAttribute('type', 'password')
+
+    await loginPage.eyeButton.click()
+
+    await expect(loginPage.passwordInput).toHaveAttribute('type', 'text')
+
+    await loginPage.eyeButton.click()
+
+    await expect(loginPage.passwordInput).toHaveAttribute('type', 'password')
 
   });
 
@@ -165,7 +200,7 @@ test.describe('Authentication', () => {
     await loginPage.resetPassLink.click();
     const page1 = await page1Promise;
 
-    await expect(page1).toHaveURL(`https://kb.insentry.io/pages/viewpage.action?pageId=691024`)
+    await expect(page1).toHaveURL(`https://doc.insentry.io/ru/`)
 
   });
 
@@ -189,6 +224,5 @@ test.describe('Authentication', () => {
     await expect(loginPage.invalidDataMessage).toHaveText(`Доступ запрещён. Пожалуйста, авторизуйтесь.`)
 
   });
-
 
 });

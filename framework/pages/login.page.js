@@ -19,7 +19,7 @@ export class LoginPage {
     this.passwordInput = page.locator('input[name="password"]');
     this.submitButton = page.locator('button[type="submit"]');
     this.resetPassButton = page.locator('button[class*=Login_forgotPasswordButton]');
-    this.eyeButton = page.locator('i[class*=icons_icon-password-show]');
+    this.eyeButton = page.locator('i[class*=icons_icon-password]');
 
     // Inputs first user
     this.newPasswordInput = page.locator('input[name="newPassword"]');
@@ -30,14 +30,18 @@ export class LoginPage {
  
 
     // First user messages
-    this.newPasswordErrorMessage = page.locator('label:has-text("Создайте пароль") > span[class*=Login_inputErrorMessage]');
-    this.confirmPasswordErrorMessage = page.locator('label:has-text("Подтвердите пароль") > span[class*=Login_inputErrorMessage]');
-    this.adminLoginInputErrorMessage = page.locator('label:has-text("Создайте логин Администратора") > span[class*=Login_inputErrorMessage]');
+    this.adminLoginInputErrorMessage = page.locator('label:has-text("Создайте логин Администратора")').locator('span[class*=Input_spanError]');
+    this.newPasswordErrorMessage = page.locator('label:has-text("Создайте пароль")').locator('span[class*=Input_msgError]');
+    this.confirmPasswordErrorMessage = page.locator('label:has-text("Подтвердите пароль")').locator('span[class*=Input_msgError]');
+    
+    this.toggle = page.locator('span[class*=Switch_slider]')
 
 
     // Messages and Errors
-    this.loginInputErrorMessage = page.locator('.Input_spanError__eDd4-'); // заменить
-    this.passwordInputErrorMessage = page.locator('label:nth-child(2) > span.Input_msgError__es_bp');  // заменить 
+    this.loginInputErrorMessage = page.locator('label:has-text("Логин") > span > span[class*=Input_spanError]');
+    this.passwordInputErrorMessage = page.locator('label:has-text("Пароль") > span[class*=Input_msgError]');
+    this.notSupportBrowserMessage = page.locator('div[class*=NotSupportBrowser_message]')
+
     this.invalidDataMessage = page.locator('div[class^=Login_error_message]');
     this.resetPassMessage = page.locator('div[class^=Login_warning_message]');
     this.resetPassLink = page.locator('a[class^=Login_link]');
