@@ -3,40 +3,25 @@ import config from '../config/config';
 
 import { users } from "../fixtures/users.fixture.js";
 
-export class User {
-    constructor(user) {
-        this.user = user
+export class UserService {
+    static async getToken (credentials) {
+         const response = await fetch(`${config.baseUrl}/api/webclient/login`, {
+             method: 'post',
+             body: JSON.stringify(credentials),
+             headers: { 'Content-Type': 'application/json' }
+         });
+         return response.headers.get('x-user-token');
     }
+ }
 
-    async login() {
-        const body = this.user
-        const response = await fetch(`${config.baseUrl}/api/webclient/login`, {
-            method: 'post',
-            body: JSON.stringify(body),
-            headers: { 'Content-Type': 'application/json' }
-        });
-        const token = response.headers.get('x-user-token');
-        return (token);
-    }
+export class CameraService {
 
-}
-
-export class Camera {
-
-    constructor(camera) {
-        this.camera = camera
-    }
-
-    async data(){
-        return(this.camera)
-    }
-
-    async create() {
+    static async create(data) {
         
-        const token = await new User(users.admin).login()
-        const body = this.camera
+        const token = await UserService.getToken(config.credentials)
+        const body = data
 
-        const camResponse = await fetch(`${config.baseUrl}/api/webclient/cameras/create`, {
+        const createResponse = await fetch(`${config.baseUrl}/api/webclient/cameras/create`, {
             method: 'post',
             body: JSON.stringify(body),
             headers: {
@@ -44,18 +29,18 @@ export class Camera {
                 'X-User-Token': token
             }
         });
-        const cameraInfo = await camResponse.json()
+        const cameraInfo = await createResponse.json()
        
         return (cameraInfo)
 
     }
 
-    async delete(addedCams) {
+    static async delete(addedCams) {
         
-        const token = await new User(users.admin).login()
+        const token = await UserService.getToken(config.credentials)
         const body = {cameras: addedCams}
 
-        const camResponse = await fetch(`${config.baseUrl}/api/webclient/cameras/remove`, {
+        const deleteResponse = await fetch(`${config.baseUrl}/api/webclient/cameras/remove`, {
             method: 'post',
             body: JSON.stringify(body),
             headers: {
@@ -63,17 +48,17 @@ export class Camera {
                 'X-User-Token': token
             }
         });
-        const response = await camResponse.json()
+        const response = await deleteResponse.json()
        
         return (response)
 
     }
 
-    async createStream(camId, stream) {
-        const token = await new User(users.admin).login()
+    static async createStream(camId, stream) {
+        const token = await UserService.getToken(config.credentials)
         const body = stream
 
-        const streamResponse = await fetch(`${config.baseUrl}/api/webclient/cameras/profiles/${camId}/create`, {
+        const createStreamResponse = await fetch(`${config.baseUrl}/api/webclient/cameras/profiles/${camId}/create`, {
             method: 'post',
             body: JSON.stringify(body),
             headers: {
@@ -81,15 +66,15 @@ export class Camera {
                 'X-User-Token': token
             }
         });
-        const streamInfo = await streamResponse.json()
+        const streamInfo = await createStreamResponse.json()
         return (streamInfo.name)
     }
 
-    async createArchive(camId, archive) {
-        const token = await new User(users.admin).login()
+    static async createArchive(camId, archive) {
+        const token = await UserService.getToken(config.credentials)
         const body = archive
 
-        const streamResponse = await fetch(`${config.baseUrl}/api/webclient/cameras/archive/${camId}/create`, {
+        const createArchiveResponse = await fetch(`${config.baseUrl}/api/webclient/cameras/archive/${camId}/create`, {
             method: 'post',
             body: JSON.stringify(body),
             headers: {
@@ -97,8 +82,8 @@ export class Camera {
                 'X-User-Token': token
             }
         });
-        const streamInfo = await streamResponse.json()
-        return (streamInfo)
+        const archiveInfo = await createArchiveResponse.json()
+        return (archiveInfo)
     }
 
 

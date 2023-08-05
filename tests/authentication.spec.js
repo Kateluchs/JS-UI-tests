@@ -106,7 +106,7 @@ test.describe('First authentication', () => {
   test('Correct inputs and first login', async ({ page }) => {
     const loginPage = new LoginPage(page);
 
-    await loginPage.loginInput.fill(config.credentials.login)
+    await loginPage.loginInput.fill(config.credentials.loginName)
     await loginPage.newPasswordInput.fill(config.credentials.password)
     await loginPage.confirmPasswordInput.fill(config.credentials.password)
     await loginPage.loginInput.click()

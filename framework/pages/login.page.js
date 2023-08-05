@@ -54,7 +54,7 @@ export class LoginPage {
 
 
 
-  async login(login = config.credentials.login, password = config.credentials.password) {
+  async login(login = config.credentials.loginName, password = config.credentials.password) {
     await this.goto()
     await this.loginInput.click()
     await this.loginInput.fill(login)

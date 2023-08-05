@@ -3,7 +3,7 @@ import { LoginPage } from '../../framework/pages/login.page';
 import { NavigationElement } from '../../framework/elements/header-nav.element';
 import { CamerasPage } from '../../framework/pages/admin/cameras.page';
 import { archives, cameras, discoveryResponses, streams } from '../../framework/fixtures/devices.fixture'
-import { Camera } from '../../framework/elements/data.manager';
+import { CameraService } from '../../framework/elements/data.manager';
 import config from '../../framework/config/config';
 
 
@@ -27,17 +27,17 @@ test.describe('Cameras', () => {
 
   test('Cameras list with cameras', async ({ page }) => {
     const camPage = new CamerasPage(page);
-    const camera = new Camera(cameras.random())
+    const cameraData = cameras.random()
     const createdCams = []
-    const cam = await camera.create()
+    const cam = await CameraService.create(cameraData)
     const cameraIndicatorStream = await camPage.cameraIndicator(cam.id , 1)
     const cameraIndicatorArchive = await camPage.cameraIndicator(cam.id , 2)
     
     //create stream
-    const stream = await camera.createStream(cam.id, streams.default())
+    const stream = await CameraService.createStream(cam.id, streams.default())
 
     //create archive
-    await camera.createArchive(cam.id, archives.default(stream))
+    await CameraService.createArchive(cam.id, archives.default(stream))
 
     await expect(camPage.tableHeader).toBeVisible()
 
@@ -50,7 +50,7 @@ test.describe('Cameras', () => {
     await expect(camPage.tooltip).toBeVisible()
 
     createdCams.push(cam.id)
-    await camera.delete(createdCams)
+    await CameraService.delete(createdCams)
 
 
   });
@@ -58,8 +58,7 @@ test.describe('Cameras', () => {
   test('Add camera manually: positive', async ({ page }) => {
 
     const camerasPage = new CamerasPage(page)
-    const camera = new Camera (cameras.random())
-    const cameraData = await camera.data()
+    const cameraData = cameras.random()
     const addedCams = []    
 
     await camerasPage.addCamButton.click()
@@ -93,15 +92,15 @@ test.describe('Cameras', () => {
     // Check if element with this id was created
     await expect(camElement).toBeVisible()
 
-    await camera.delete(addedCams)
+    await CameraService.delete(addedCams)
 
   });
 
   test('Go to camera settings', async ({ page }) => {
     const camPage = new CamerasPage(page);
-    const camera = new Camera(cameras.random())
+    const cameraData = cameras.random()
     const createdCams = []
-    const cam = await camera.create()
+    const cam = await CameraService.create(cameraData)
     const cameraElement = await camPage.cameraElement(cam.id)
     createdCams.push(cam.id)
 
@@ -109,15 +108,14 @@ test.describe('Cameras', () => {
 
     await expect(page).toHaveURL(`${config.baseUrl}/d/admin/cam/${cam.id}`)
 
-    await camera.delete(createdCams)
+    await CameraService.delete(createdCams)
     
   });
 
   test('Delete camera: one', async ({ page }) => {
     const camerasPage = new CamerasPage(page)
-    const camera = new Camera(cameras.random())
-    const createdCam = await camera.create()
-    const cameraData = await camera.data()
+    const cameraData = cameras.random()
+    const createdCam = await CameraService.create(cameraData)
     const camElement = await camerasPage.cameraElement(createdCam.id)
     const camDeleteButton = await camerasPage.cameraDeleteButton(createdCam.id)
 
@@ -151,8 +149,7 @@ test.describe('Cameras', () => {
 
     for (let i = 0; i < camerasCount; i++){
 
-      const camera = new Camera(cameras.random())
-      const createdCam = await camera.create()
+      const createdCam = await CameraService.create(cameras.random())
       addedCams.push(createdCam.id)
     }
 

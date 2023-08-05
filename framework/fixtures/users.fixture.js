@@ -1,9 +1,17 @@
-import config from "../config/config"
+import { faker } from '@faker-js/faker';
 
 export const users = {
-admin: {
-        loginName: config.credentials.login,
-        password: config.credentials.password,
-        language: config.credentials.language
+    random() {
+        return ({
+            params: {
+                name: faker.internet.fullName(),
+                description: faker.lorem.sentence(),
+                enabled: faker.datatype.boolean(),
+                admin: faker.datatype.boolean(),
+            },
+            login: faker.internet.userName(),
+            password: faker.internet.password()
+        }
+        )
     }
 }

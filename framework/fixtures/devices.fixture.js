@@ -62,7 +62,6 @@ export const discoveryResponses = {
 
 }
 
-
 export const cameras = {
 
     random() {
